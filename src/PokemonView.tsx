@@ -1,4 +1,4 @@
-import { Pokemon } from "./App";
+import { Pokemon } from "./PokemonStore";
 
 const PokemonHeader = ({ id, name }: { id: number; name: string | React.ReactNode }) => {
   return (
