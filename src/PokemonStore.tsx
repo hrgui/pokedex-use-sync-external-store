@@ -7,7 +7,7 @@ export class PokemonStore {
   static id = 1;
   static isLoading = false;
   static currentPokemon: Pokemon | null = null;
-  static listeners = new Set<() => void>();
+  static eventTarget = new EventTarget(); // Use EventTarget for event handling
   static currentState = {
     id: PokemonStore.id,
     currentPokemon: PokemonStore.currentPokemon,
@@ -35,7 +35,8 @@ export class PokemonStore {
   };
 
   static emitChange() {
-    PokemonStore.listeners.forEach((listener) => listener());
+    const event = new CustomEvent("change");
+    PokemonStore.eventTarget.dispatchEvent(event); // Dispatch a "change" event
   }
 
   static fetchPokemon(id: number) {
@@ -72,9 +73,9 @@ export class PokemonStore {
   }
 
   static subscribe(listener: () => void) {
-    PokemonStore.listeners.add(listener);
+    PokemonStore.eventTarget.addEventListener("change", listener);
     return () => {
-      PokemonStore.listeners.delete(listener);
+      PokemonStore.eventTarget.removeEventListener("change", listener);
     };
   }
 
