@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { Pokemon } from "./Pokemon";
 
-const MAX_POKEMON_ID = 1025;
+export const MAX_POKEMON_ID = 1025;
 
 export class PokemonStore {
   static id = 1;
