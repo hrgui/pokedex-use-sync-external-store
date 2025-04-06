@@ -1,4 +1,4 @@
-import { Pokemon } from "./PokemonStore";
+import { Pokemon } from "./Pokemon";
 
 const PokemonHeader = ({ id, name }: { id: number; name: string | React.ReactNode }) => {
   return (
@@ -20,8 +20,6 @@ export const PokemonView = ({
   error?: Error | null;
   loading: boolean;
 }) => {
-  //  const { data, loading, error } = useStore($currentPokemon);
-
   if (data)
     return (
       <div>
