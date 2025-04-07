@@ -4,6 +4,7 @@ import { Pokemon } from "./Pokemon";
 export const MAX_POKEMON_ID = 1025;
 
 export class PokemonStore {
+  static controller = new AbortController();
   static id = 1;
   static isLoading = false;
   static currentPokemon: Pokemon | null = null;
@@ -39,12 +40,20 @@ export class PokemonStore {
     PokemonStore.eventTarget.dispatchEvent(event); // Dispatch a "change" event
   }
 
-  static fetchPokemon(id: number) {
-    return Pokemon.get(id).then((data) => {
-      PokemonStore.currentPokemon = data;
+  static async fetchPokemon(id: number) {
+    try {
+      const res = await Pokemon.get(id, PokemonStore.controller.signal);
+      PokemonStore.currentPokemon = res;
       PokemonStore.isLoading = false;
       PokemonStore.updateState();
-    });
+    } catch (error: unknown) {
+      const err = error as Error;
+      if (err.name !== "AbortError") {
+        console.error("Failed to fetch Pokemon:", error);
+        PokemonStore.isLoading = false;
+        PokemonStore.updateState();
+      }
+    }
   }
 
   static updateState() {
@@ -57,6 +66,8 @@ export class PokemonStore {
   }
 
   static setId(id: number) {
+    PokemonStore.controller.abort();
+    PokemonStore.controller = new AbortController();
     PokemonStore.id = id;
     PokemonStore.isLoading = true;
     PokemonStore.currentPokemon = null;

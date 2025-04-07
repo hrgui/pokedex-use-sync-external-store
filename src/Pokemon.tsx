@@ -49,14 +49,31 @@ export class Pokemon {
     return [...res, ...other, ...versions];
   }
 
-  static async get(id: number) {
+  static async get(id: number, signal?: AbortSignal) {
     if (pokedex[id]) {
       return pokedex[id];
     }
 
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, { signal });
     const d = new Pokemon(await res.json());
     pokedex[d.id] = d;
     return d;
   }
 }
+
+// const controller = new AbortController();
+// const signal = controller.signal;
+
+// try {
+//   const pokemon = await Pokemon.get(1, signal);
+//   console.log(pokemon);
+// } catch (error) {
+//   if (error.name === "AbortError") {
+//     console.log("Fetch request was canceled");
+//   } else {
+//     console.error(error);
+//   }
+// }
+
+// // To cancel the fetch request:
+// controller.abort();
